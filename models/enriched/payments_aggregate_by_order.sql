@@ -1,10 +1,11 @@
+
 {{
     config(
         materialized = 'table'
     )
 }}
 
-{%- set payment_methods = get_column_values(source('dbt_raw', 'payments'), 'paymentmethod', 'ASC') -%}
+{%- set payment_methods = get_column_values(source('raw_nielsen', 'payments'), 'paymentmethod', 'ASC') -%}
 
 SELECT
     orderid AS ORDER_ID,
@@ -14,7 +15,7 @@ SELECT
         {%- if not loop.last %},{% endif -%}
     {% endfor %}
 FROM
-    {{ source('dbt_raw', 'payments') }}
+    {{ source('raw_nielsen', 'payments') }}
 GROUP BY
     1
 
@@ -25,6 +26,6 @@ GROUP BY
 --     SUM(CASE WHEN paymentmethod = 'credit_card' THEN amount END) AS credit_card_amount,
 --     SUM(CASE WHEN paymentmethod = 'gift_card' THEN amount END) AS gift_card_amount
 -- FROM
---     {{ source('dbt_raw', 'payments') }}
+--     {{ source('raw_nielsen', 'payments') }}
 -- GROUP BY
 --     1

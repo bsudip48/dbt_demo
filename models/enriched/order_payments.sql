@@ -1,3 +1,4 @@
+
 SELECT
     ORDERS.ID AS ORDER_ID,
     ORDERS.USER_ID AS CUSTOMER_ID,
@@ -6,7 +7,7 @@ SELECT
     COUNT(DISTINCT PAYMENTS.id) AS NUM_PAYMENTS,
     COUNT(DISTINCT PAYMENTS.paymentmethod) AS NUM_PAYMENT_METHODS
 FROM
-    {{ source('dbt_raw', 'orders') }} ORDERS
-    INNER JOIN {{ source('dbt_raw', 'payments') }} PAYMENTS ON (PAYMENTS.orderid = ORDERS.ID)
+    {{ source('raw_nielsen', 'orders') }} ORDERS
+    INNER JOIN {{ source('raw_nielsen', 'payments') }} PAYMENTS ON (PAYMENTS.orderid = ORDERS.ID)
 GROUP BY
     1, 2, 3

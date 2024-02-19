@@ -1,8 +1,9 @@
+
 version: 2
 
 models:
   - name: customer_orders
-    description: Orders data for each customer
+    description: Orders data for each Customer
     config:
       meta:
         owner: Sudip
@@ -19,10 +20,10 @@ models:
           - not_null
     tests:
       - dbt_utils.equal_rowcount:
-          compare_model: source('dbt_raw', 'customers')
+          compare_model: source('raw_nielsen', 'customers')
   
   - name: customer_payments
-    description: Payments data for each customer
+    description: Payments data for each Customer
     config:
       meta:
         owner: Sudip
@@ -47,7 +48,7 @@ models:
             - PAYMENT_METHOD
   
   - name: order_payments
-    description: Payments data for each order
+    description: Payments data for each Order
     config:
       meta:
         owner: Sudip
@@ -70,10 +71,10 @@ models:
           - not_null
     tests:
       - dbt_utils.equal_rowcount:
-          compare_model: source('dbt_raw', 'orders')
+          compare_model: source('raw_nielsen', 'orders')
   
   - name: payments_aggregate_by_order
-    description: Aggregated payments data for each order
+    description: Aggregated payments data for each Order
     config:
       meta:
         owner: Sudip
@@ -87,4 +88,4 @@ models:
           - not_null
     tests:
       - dbt_utils.equal_rowcount:
-          compare_model: source('dbt_raw', 'orders')
+          compare_model: source('raw_nielsen', 'orders')

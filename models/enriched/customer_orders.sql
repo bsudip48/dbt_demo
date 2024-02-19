@@ -1,3 +1,4 @@
+
 SELECT
     CUSTOMERS.ID AS CUSTOMER_ID,
     CUSTOMERS.FIRST_NAME,
@@ -6,7 +7,7 @@ SELECT
     MAX(ORDERS.ORDER_DATE) AS MOST_RECENT_ORDER_DATE,
     MIN(ORDERS.ORDER_DATE) AS FIRST_ORDER_DATE
 FROM
-    {{ source('dbt_raw', 'customers') }} CUSTOMERS
-    LEFT OUTER JOIN {{ source('dbt_raw', 'orders') }} ORDERS ON (ORDERS.USER_ID = CUSTOMERS.ID)
+    {{ source('raw_nielsen', 'customers') }} CUSTOMERS
+    LEFT OUTER JOIN {{ source('raw_nielsen', 'orders') }} ORDERS ON (ORDERS.USER_ID = CUSTOMERS.ID)
 GROUP BY
     1, 2, 3
