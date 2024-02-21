@@ -1,0 +1,120 @@
+
+version: 2
+
+models:
+  - name: t_domain_nielsen_dim_customers
+    description: Nielsen Customers Data
+    config:
+      meta:
+        owner: Sudip
+        email: bsudip48@yahoo.com
+        contains_pii: true
+    columns:
+      - name: CUSTOMER_SK
+        description: Primary Key
+        tests:
+          - unique
+          - not_null
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('v_harmonized_nielsen_customers')
+
+  - name: t_domain_nielsen_fact_orders
+    description: Nielsen Orders Data
+    config:
+      meta:
+        owner: Sudip
+        email: bsudip48@yahoo.com
+        contains_pii: false
+    columns:
+      - name: ORDER_SK
+        description: Primary key
+        tests:
+          - unique
+          - not_null
+      - name: CUSTOMER_SK
+        tests:
+          - not_null
+          - relationships:
+              to: ref('t_domain_nielsen_dim_customers')
+              field: CUSTOMER_SK
+      - name: ORDER_DATE
+        tests:
+          - not_null
+      - name: ORDER_STATUS
+        tests:
+          - not_null
+          - accepted_values:
+              values: [ 'PLACED', 'SHIPPED', 'COMPLETED', 'RETURN_PENDING', 'RETURNED' ]
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('v_harmonized_nielsen_orders')
+
+  - name: t_domain_nielsen_fact_payments
+    description: Nielsen Payments Data
+    config:
+      meta:
+        owner: Sudip
+        email: bsudip48@yahoo.com
+        contains_pii: false
+    columns:
+      - name: PAYMENT_SK
+        description: Primary key
+        tests:
+          - unique
+          - not_null
+      - name: ORDER_SK
+        tests:
+          - not_null
+          - relationships:
+              to: ref('t_domain_nielsen_fact_orders')
+              field: ORDER_SK
+      - name: PAYMENT_METHOD
+        tests:
+          - not_null
+      - name: PAYMENT_STATUS
+        tests:
+          - not_null
+          - accepted_values:
+              values: [ 'SUCCESS', 'FAIL' ]
+      - name: PAYMENT_AMOUNT
+        tests:
+          - not_null
+    tests:
+      - inner_relationship_check:
+          source_model: ref('t_domain_nielsen_fact_orders')
+          source_column_name: ORDER_SK
+          related_model: ref('t_domain_nielsen_fact_payments')
+          related_column_name: ORDER_SK
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('v_harmonized_nielsen_payments')
+
+  - name: v_domain_nielsen_ana_customer_orders
+    description: Orders data for each Customer
+    config:
+      meta:
+        owner: Sudip
+        email: bsudip48@yahoo.com
+        contains_pii: true
+  
+  - name: v_domain_nielsen_ana_customer_payments
+    description: Payments data for each Customer
+    config:
+      meta:
+        owner: Sudip
+        email: bsudip48@yahoo.com
+        contains_pii: false
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - CUSTOMER_FIRST_NAME
+            - CUSTOMER_LAST_NAME
+            - PAYMENT_METHOD
+  
+  - name: v_domain_nielsen_ana_order_payments
+    description: Payments data for each Order
+    config:
+      meta:
+        owner: Sudip
+        email: bsudip48@yahoo.com
+        contains_pii: false

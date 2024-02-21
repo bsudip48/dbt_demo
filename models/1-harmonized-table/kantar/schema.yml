@@ -1,0 +1,90 @@
+
+version: 2
+
+models:
+  - name: t_harmonized_kantar_customers
+    description: Kantar Customers Data
+    config:
+      meta:
+        owner: Sudip
+        email: bsudip48@yahoo.com
+        contains_pii: true
+    columns:
+      - name: CUSTOMER_ID
+        description: Primary Key
+        tests:
+          - unique
+          - not_null
+
+  - name: t_harmonized_kantar_orders
+    description: Kantar Orders Data
+    config:
+      meta:
+        owner: Sudip
+        email: bsudip48@yahoo.com
+        contains_pii: false
+    columns:
+      - name: ORDER_ID
+        description: Primary key
+        tests:
+          - unique
+          - not_null
+      - name: CUSTOMER_ID
+        tests:
+          - not_null
+          - relationships:
+              to: ref('t_harmonized_kantar_customers')
+              field: CUSTOMER_ID
+      - name: ORDER_DATE
+        tests:
+          - not_null
+      - name: ORDER_STATUS
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['PLACED', 'SHIPPED', 'COMPLETED', 'RETURN_PENDING', 'RETURNED']
+      - name: BQ_INSERT_TIMESTAMP
+        description: BigQuery Data Load Timestamp
+        tests:
+          - not_null
+
+  - name: t_harmonized_kantar_payments
+    description: Kantar Payments Data
+    config:
+      meta:
+        owner: Sudip
+        email: bsudip48@yahoo.com
+        contains_pii: false
+    columns:
+      - name: PAYMENT_ID
+        description: Primary key
+        tests:
+          - unique
+          - not_null
+      - name: ORDER_ID
+        tests:
+          - not_null
+          - relationships:
+              to: ref('t_harmonized_kantar_orders')
+              field: ORDER_ID
+      - name: PAYMENT_METHOD
+        tests:
+          - not_null
+      - name: PAYMENT_STATUS
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['SUCCESS', 'FAIL']
+      - name: PAYMENT_AMOUNT
+        tests:
+          - not_null
+      - name: BQ_INSERT_TIMESTAMP
+        description: BigQuery Data Load Timestamp
+        tests:
+          - not_null
+    tests:
+      - inner_relationship_check:
+          source_model: ref('t_harmonized_kantar_orders')
+          source_column_name: ORDER_ID
+          related_model: ref('t_harmonized_kantar_payments')
+          related_column_name: ORDER_ID

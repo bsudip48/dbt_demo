@@ -1,0 +1,40 @@
+
+version: 2
+
+models:
+  - name: v_harmonized_kantar_customers
+    description: Kantar Customers File
+    config:
+      meta:
+        owner: Sudip
+        email: bsudip48@yahoo.com
+        contains_pii: true
+    columns:
+      - name: CUSTOMER_ID
+        description: Primary Key
+
+  - name: v_harmonized_kantar_orders
+    description: Kantar Orders File
+    config:
+      meta:
+        owner: Sudip
+        email: bsudip48@yahoo.com
+        contains_pii: false
+    columns:
+      - name: ORDER_ID
+        description: Primary key
+      - name: BQ_INSERT_TIMESTAMP
+        description: BigQuery Data Load Timestamp
+
+  - name: v_harmonized_kantar_payments
+    description: Kantar Payments File
+    config:
+      meta:
+        owner: Sudip
+        email: bsudip48@yahoo.com
+        contains_pii: false
+    columns:
+      - name: PAYMENT_ID
+        description: Primary key
+      - name: BQ_INSERT_TIMESTAMP
+        description: BigQuery Data Load Timestamp

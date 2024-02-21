@@ -1,3 +1,4 @@
+
 {% macro get_column_values(model, column_name, sort_order) %}
 
     {% set relation_query %}

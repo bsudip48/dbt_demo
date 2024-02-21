@@ -1,0 +1,17 @@
+
+{{
+    config(
+        materialized = 'table'
+    )
+}}
+
+SELECT
+    MD5('KANTAR' || 'ORDERS' || ORDERS.ORDER_DATE || ORDERS.ORDER_ID) AS ORDER_SK,
+    ORDERS.ORDER_ID AS SOURCE_ORDER_ID,
+    DIM_CUSTOMER.CUSTOMER_SK,
+    ORDERS.CUSTOMER_ID AS SOURCE_CUSTOMER_ID,
+    ORDERS.ORDER_DATE,
+    ORDERS.ORDER_STATUS
+FROM
+    {{ ref('v_harmonized_kantar_orders') }} ORDERS
+    LEFT OUTER JOIN {{ ref('t_domain_kantar_dim_customers') }} DIM_CUSTOMER ON (DIM_CUSTOMER.SOURCE_CUSTOMER_ID = ORDERS.CUSTOMER_ID)

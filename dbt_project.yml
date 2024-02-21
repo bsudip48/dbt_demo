@@ -15,7 +15,7 @@ profile: 'dbt_demo'
 model-paths: ["models"]
 analysis-paths: ["analyses"]
 test-paths: ["tests"]
-seed-paths: ["data"]
+seed-paths: ["seeds"]
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
 
@@ -38,6 +38,20 @@ models:
       relation: true
       columns: true
   
-    enriched:
-      +schema: enriched
-      +materialized: view
+    1-harmonized-table:
+      kantar:
+        +schema: harmonized_kantar
+      nielsen:
+        +schema: harmonized_nielsen
+    2-harmonized-view:
+      kantar:
+        +schema: harmonized_kantar
+      nielsen:
+        +schema: harmonized_nielsen
+    3-domain:
+      epos:
+        +schema: domain_epos
+      kantar:
+        +schema: domain_kantar
+      nielsen:
+        +schema: domain_nielsen
